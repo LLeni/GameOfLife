@@ -1,21 +1,23 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-const canvasX =  canvas.getBoundingClientRect().top;
-const canvasY =  canvas.getBoundingClientRect().left;
+
+const canvasX =  canvas.getBoundingClientRect().left;
+let clickX = 0;
+
+const canvasY =  canvas.getBoundingClientRect().top;
+let clickY = 0;
 
 const lengthCellsSlider = document.getElementById("lengthCellsSlider");
+let lengthCell = 0;
+
 const speedSlider = document.getElementById("speedSlider");
+let speedDay = 0;
 
 canvas.addEventListener('click', handlerClickCanvas);
 
-let clickX = 0;
-let clickY = 0;
-let lengthCell = 0;
-let speedDay = 0;
-
 let currentGeneration = new Array();
 
-let isSomethingChange = true;
+let timerId;
 
 $('#lengthCellsSlider').on('input', function() {
    initGrid();
@@ -23,6 +25,7 @@ $('#lengthCellsSlider').on('input', function() {
 
 $('#speedSlider').on('input', function() {
     speedDay = parseInt(speedSlider.value * 10);
+    console.log("speedY");
  });
 
 
@@ -31,10 +34,10 @@ function handlerClickCanvas(e) {
     clickX = e.clientX;
     clickY = e.clientY;
     
-    ctx.rect(parseInt(Math.trunc((clickX-canvasY)/lengthCell))*lengthCell  , parseInt(Math.trunc((clickY-canvasX)/lengthCell))*lengthCell, lengthCell, lengthCell);
+    ctx.rect(parseInt(Math.trunc((clickX-canvasX)/lengthCell))*lengthCell  , parseInt(Math.trunc((clickY-canvasY)/lengthCell))*lengthCell, lengthCell, lengthCell);
     ctx.fill();
 
-    currentGeneration[parseInt(Math.trunc((clickY-canvasX)/lengthCell))][parseInt(Math.trunc((clickX-canvasY)/lengthCell))] = 1;
+    currentGeneration[parseInt(Math.trunc((clickY-canvasY)/lengthCell))][parseInt(Math.trunc((clickX-canvasX)/lengthCell))] = 1;
 
   }
 
@@ -67,9 +70,8 @@ function drawGrid(){
 }
 
 function live(){
-    while(isSomethingChange){
-        setTimeout(liveOneDay, speedDay);
-    }
+
+    timerId = setInterval(liveOneDay, speedDay);
 }
 
 function liveOneDay(){
@@ -146,12 +148,9 @@ function liveOneDay(){
             }
         }
     }
-    if(currentGeneration == nextGeneration){
-        isSomethingChange = false;
-    } else {
-        currentGeneration = nextGeneration;
-        redraw();
-    }
+
+    currentGeneration = nextGeneration;
+    redraw();
 }
 
 function redraw(){
@@ -165,4 +164,8 @@ function redraw(){
         }
     }
     drawGrid(); // Потому что clearRect задевает сетку
+}
+
+function stop(){
+    clearInterval(timerId);
 }
