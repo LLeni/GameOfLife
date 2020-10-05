@@ -1,5 +1,15 @@
+//TODO: При нажатии на play кнопка меняет цвет на зеленный, при повторном нажатии кнопка возвращает свой первоначальный вид
+//TODO: При заселении жителей жители заходят на сетку и таким образом часть сетки исчезает, но при проживании поколений жители появляются ровно посередине клетки не выходя за ее пределы
+//TODO: При спуске страницы неправильно заселяются жители
+//TODO: Опции должны быть правее от самой игры, а не снизу
+
+const MESSENGE_NOT_SET_LENGTH_CELL = "Вы еще не задали размер сетки";
+
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+
+const numberGenerationB = document.getElementById("numberGenerationB");
+let numberGeneration = 0;
 
 const canvasX =  canvas.getBoundingClientRect().left;
 let clickX = 0;
@@ -13,11 +23,16 @@ let lengthCell = 0;
 const speedSlider = document.getElementById("speedSlider");
 let speedDay = 0;
 
+const colorPicker = document.getElementById("colorPicker");
+
+const playButton = document.getElementById("playButton");
+
 canvas.addEventListener('click', handlerClickCanvas);
 
 let currentGeneration = new Array();
-
 let timerId;
+let isLiveDays = false;
+let style = document.createElement('style');
 
 $('#lengthCellsSlider').on('input', function() {
    initGrid();
@@ -25,7 +40,6 @@ $('#lengthCellsSlider').on('input', function() {
 
 $('#speedSlider').on('input', function() {
     speedDay = parseInt(speedSlider.value * 10);
-    console.log("speedY");
  });
 
 
@@ -34,14 +48,19 @@ function handlerClickCanvas(e) {
     clickX = e.clientX;
     clickY = e.clientY;
     
-    ctx.rect(parseInt(Math.trunc((clickX-canvasX)/lengthCell))*lengthCell  , parseInt(Math.trunc((clickY-canvasY)/lengthCell))*lengthCell, lengthCell, lengthCell);
-    ctx.fill();
+    ctx.fillStyle = colorPicker.value;
+    ctx.fillRect(parseInt(Math.trunc((clickX-canvasX)/lengthCell))*lengthCell  , parseInt(Math.trunc((clickY-canvasY)/lengthCell))*lengthCell, lengthCell, lengthCell);
+
+   // ctx.fill();
 
     currentGeneration[parseInt(Math.trunc((clickY-canvasY)/lengthCell))][parseInt(Math.trunc((clickX-canvasX)/lengthCell))] = 1;
 
   }
 
 function initGrid(){
+    numberGeneration = 0;
+    numberGenerationB.innerHTML = numberGeneration;
+    stop();
     lengthCell = parseInt(lengthCellsSlider.value);
     currentGeneration = new Array();
     for(let i = 0; i <= (canvas.width/lengthCell); i++){
@@ -71,10 +90,25 @@ function drawGrid(){
 
 function live(){
 
-    timerId = setInterval(liveOneDay, speedDay);
+    if(lengthCell == 0){
+        alert(MESSENGE_NOT_SET_LENGTH_CELL);
+    } else {
+        if(isLiveDays == false){
+            timerId = setInterval(liveOneDay, speedDay);
+            isLiveDays = true;
+            playButton.style.backgroundColor = '#e5e5e5';
+            console.log = "sdsad";
+        } else {
+            clearInterval(timerId);
+            isLiveDays = false;
+        }
+    }
+
+ 
 }
 
 function liveOneDay(){
+    
     var countLives;
 //    var nextCells = cells;
     let nextGeneration = new Array();
@@ -131,7 +165,6 @@ function liveOneDay(){
                 if(currentGeneration[line+1][column] == 1) countLives ++; // South
             }
 
-            console.log(countLives);
             if(currentGeneration[line][column] == 1){
                 if(countLives == 2 || countLives == 3){
                     nextGeneration[line][column] = 1
@@ -148,8 +181,10 @@ function liveOneDay(){
             }
         }
     }
-
+    
     currentGeneration = nextGeneration;
+    numberGeneration++;
+    numberGenerationB.innerHTML = numberGeneration;
     redraw();
 }
 
@@ -166,6 +201,19 @@ function redraw(){
     drawGrid(); // Потому что clearRect задевает сетку
 }
 
-function stop(){
-    clearInterval(timerId);
+function clearGrid(){
+    if(lengthCell == 0){
+        alert(MESSENGE_NOT_SET_LENGTH_CELL);
+    } else {
+        numberGeneration = 0;
+        numberGenerationB.innerHTML = numberGeneration;
+        stop();
+        for(let i = 0; i < currentGeneration.length; i++){
+            for(let j = 0; j < currentGeneration[i].length; j++){
+                currentGeneration[i][j] = 0;
+            }
+        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawGrid();
+    }
 }

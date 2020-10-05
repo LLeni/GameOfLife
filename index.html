@@ -2,19 +2,40 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        
         <title>Game of Life SNAPSHOT-0</title>
         <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+        <link href="./style.css" rel="stylesheet" type="text/css">
     </head>
     <body>
         <h1>Сама игра</h1>
-        <canvas id="canvas" width="800" height="800"></canvas>
-
-        <input id="lengthCellsSlider" type="range" min="10" max="100" step="10" value="10" />
-        <input id="speedSlider" type="range" min="1" max="20" step="1" value="2" />
+        <div>
+            <canvas id="canvas" width="800" height="800"></canvas>
+        </div>
+        <div id = "options">
+            <div class = "option">
+                <label for="lengthCellsSlider">Размер клеток:</label>
+                <input id="lengthCellsSlider" type="range" min="10" max="100" step="10" value="10" />
+            </div>
+            <div class = "option">
+                <label for="speedSlider">Длительность дня:</label>
+                <input id="speedSlider" type="range" min="1" max="20" step="1" value="2" />
+            </div>
+            <div class = "option">
+                <label for="colorPicker"> Цвет жителей:</label>
+                <input type="color" id="colorPicker" value="#986767">
+            </div>
+            <div class = "option">
+                <p>Текущее поколение: <b id="numberGenerationB"></b> </p>
+            </div>
+            <script src="js/life.js"></script>
+            <div class="option">
+                <!--<input type="button" onclick="live()" value="Пора выживать!" /> -->
+                <input id="playButton" style="background-color: white;" type="image" onclick="live()" width="64" height="64" src="./images/play.ico" />
+               <!-- <input type="button" onclick="clearGrid()" value="Очистить!" /> -->
+               <input id="clearButton" style="background-color: white;" type="image" onclick="clearGrid()" width="64" height="64" src="./images/clear.png" />
+            </div>
     
-        <script src="js/life.js"></script>
-        <input type="button" onclick="live()" value="Пора выживать!" />
-        <input type="button" onclick="stop()" value="Хватит выживать!" />
+        </div>
+        
     </body>
 </html>

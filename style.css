@@ -1,0 +1,34 @@
+
+
+#playButton {
+    transition: border 0.5s linear; 
+    border: 1px solid black;
+    border-radius: 35px;
+    background-color: white;
+    cursor: pointer;
+    user-select: none;
+    border: none;
+    outline: none;
+    transition: background 9999999s;
+}
+
+#playButton:hover {
+    border: 2px solid black;
+    box-shadow: 1px 1px 2px 0 black;
+    
+}
+
+#playButton:active{
+    border: 2px solid black;
+    background-color: green;
+    transition: background 0s; 
+}
+
+#options{
+    position: relative;
+}
+
+.option{
+    display: inline-block;
+    position: relative;
+}
