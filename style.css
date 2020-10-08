@@ -24,11 +24,50 @@
     transition: background 0s; 
 }
 
-#options{
-    position: relative;
+
+#canvas{
+    border: 4px solid white;
+    background-color: black;
 }
 
-.option{
+div{
     display: inline-block;
-    position: relative;
+    vertical-align: top;
+}
+
+#options{
+    border: 4px solid white;
+    background-color: black;
+    margin-top: 0px;
+    margin-left: 0px;
+    padding-left:10px;
+    padding-right: 10px;
+    width: 25%;
+    height:100%;
+
+}
+h2{
+    color: white;
+    text-align: center;
+}
+label {
+    color: white;
+}
+p{
+    color:white;
+    text-align: justify;
+}
+b {
+    color: white;
+}
+
+html{
+
+    width: 100%;
+    height: 100%; /* Высота веб-страницы */
+    background: #562300 url(images/background2.gif) 
+          no-repeat 0 0; /* Путь к графическому файлу с фоном */
+    background-size: 100%; /* Современные браузеры */
+   
+    color: #fff; /* Белый цвет текста */
 }

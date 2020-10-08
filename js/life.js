@@ -1,7 +1,6 @@
 //TODO: При нажатии на play кнопка меняет цвет на зеленный, при повторном нажатии кнопка возвращает свой первоначальный вид
-//TODO: При заселении жителей жители заходят на сетку и таким образом часть сетки исчезает, но при проживании поколений жители появляются ровно посередине клетки не выходя за ее пределы
 //TODO: При спуске страницы неправильно заселяются жители
-//TODO: Опции должны быть правее от самой игры, а не снизу
+//TODO: На границах матрицы не учитываются возможные пустые клетки, которые могли бы быть за ее пределами, т.е надо нашу матрицу окружать стенами (5x5 в 6x6) 
 
 const MESSENGE_NOT_SET_LENGTH_CELL = "Вы еще не задали размер сетки";
 
@@ -11,6 +10,12 @@ const ctx = canvas.getContext("2d");
 const numberGenerationB = document.getElementById("numberGenerationB");
 let numberGeneration = 0;
 
+//const numberLiveB = document.getElementById("numberLiveB");
+//let numberLive = 0;
+
+//const numberDeadB = document.getElementById("numberDeadB");
+//let numberDead = 0;
+
 const canvasX =  canvas.getBoundingClientRect().left;
 let clickX = 0;
 
@@ -18,9 +23,11 @@ const canvasY =  canvas.getBoundingClientRect().top;
 let clickY = 0;
 
 const lengthCellsSlider = document.getElementById("lengthCellsSlider");
+const valueLengthCellsSlider = document.getElementById("valueLengthCellsSlider");
 let lengthCell = 0;
 
 const speedSlider = document.getElementById("speedSlider");
+const valueSpeedSlider = document.getElementById("valueSpeedSlider");
 let speedDay = 0;
 
 const colorPicker = document.getElementById("colorPicker");
@@ -34,27 +41,44 @@ let timerId;
 let isLiveDays = false;
 let style = document.createElement('style');
 
+$(document).ready(init());
+
+function init(){
+    //initGrid(); //TODO: По какой-то необъяснимой причине после загрузки страницы нельзя сразу же инициализировать сетку, т.к пропадают кнопки
+    initSpeed();
+}
+
+
 $('#lengthCellsSlider').on('input', function() {
    initGrid();
+   clearInterval(timerId);
 });
 
 $('#speedSlider').on('input', function() {
-    speedDay = parseInt(speedSlider.value * 10);
+    initSpeed();
  });
 
-
+function initSpeed(){
+    speedDay = parseInt(speedSlider.value * 10);
+    valueSpeedSlider.innerHTML = (speedDay/1000) + "sec";
+    if(isLiveDays){
+        clearInterval(timerId);
+        timerId = setInterval(liveOneDay, speedDay);
+    }
+}
 
 function handlerClickCanvas(e) {
     clickX = e.clientX;
     clickY = e.clientY;
     
     ctx.fillStyle = colorPicker.value;
-    ctx.fillRect(parseInt(Math.trunc((clickX-canvasX)/lengthCell))*lengthCell  , parseInt(Math.trunc((clickY-canvasY)/lengthCell))*lengthCell, lengthCell, lengthCell);
+    ctx.fillRect(parseInt(Math.trunc((clickX-canvasX)/lengthCell))*lengthCell + 1, parseInt(Math.trunc((clickY-canvasY)/lengthCell))*lengthCell + 1, lengthCell - 2, lengthCell - 2);
 
    // ctx.fill();
-
+   // ctx.fillRect(column * lengthCell, line * lengthCell,lengthCell,lengthCell);
     currentGeneration[parseInt(Math.trunc((clickY-canvasY)/lengthCell))][parseInt(Math.trunc((clickX-canvasX)/lengthCell))] = 1;
 
+    console.log((clickX-canvasX) + " " + (clickY-canvasY));
   }
 
 function initGrid(){
@@ -62,6 +86,7 @@ function initGrid(){
     numberGenerationB.innerHTML = numberGeneration;
     stop();
     lengthCell = parseInt(lengthCellsSlider.value);
+    valueLengthCellsSlider.innerHTML = lengthCell + "px";
     currentGeneration = new Array();
     for(let i = 0; i <= (canvas.width/lengthCell); i++){
         currentGeneration.push(new Array());
@@ -78,12 +103,14 @@ function drawGrid(){
         ctx.beginPath();
         ctx.moveTo(lengthCell * currentPosVertLine, 0);
         ctx.lineTo(lengthCell * currentPosVertLine, canvas.height);
+        ctx.strokeStyle = "#FFFFFF";
         ctx.stroke();
     }
     for(let currentPosHorLine = 0; currentPosHorLine < (canvas.height/lengthCell); currentPosHorLine++  ){
         ctx.beginPath();
         ctx.moveTo(0, lengthCell * currentPosHorLine);
         ctx.lineTo(canvas.width, lengthCell * currentPosHorLine);
+        ctx.strokeStyle = "#FFFFFF";
         ctx.stroke();
     }
 }
@@ -97,20 +124,23 @@ function live(){
             timerId = setInterval(liveOneDay, speedDay);
             isLiveDays = true;
             playButton.style.backgroundColor = '#e5e5e5';
-            console.log = "sdsad";
         } else {
             clearInterval(timerId);
             isLiveDays = false;
         }
     }
+}
 
- 
+function next(){
+    clearInterval(timerId);
+    isLiveDays = false;
+
+    liveOneDay();
 }
 
 function liveOneDay(){
     
     var countLives;
-//    var nextCells = cells;
     let nextGeneration = new Array();
     for(let i = 0; i < currentGeneration.length; i++){
         nextGeneration.push(new Array());
@@ -188,17 +218,18 @@ function liveOneDay(){
     redraw();
 }
 
+
 function redraw(){
     for(let line = 0; line < currentGeneration.length; line++){
         for(let column = 0; column < currentGeneration[line].length; column++){
             if(currentGeneration[line][column] == 0){
-                ctx.clearRect(column * lengthCell, line * lengthCell,lengthCell,lengthCell);
+                ctx.clearRect(column * lengthCell + 1, line * lengthCell + 1, lengthCell - 2, lengthCell - 2);
             } else {
-                ctx.fillRect(column * lengthCell, line * lengthCell,lengthCell,lengthCell);
+                ctx.fillRect(column * lengthCell + 1, line * lengthCell + 1, lengthCell - 2, lengthCell - 2);
             }
         }
     }
-    drawGrid(); // Потому что clearRect задевает сетку
+    //  drawGrid(); // Потому что clearRect задевает сетку
 }
 
 function clearGrid(){

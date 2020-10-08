@@ -7,35 +7,75 @@
         <link href="./style.css" rel="stylesheet" type="text/css">
     </head>
     <body>
-        <h1>Сама игра</h1>
-        <div>
-            <canvas id="canvas" width="800" height="800"></canvas>
-        </div>
-        <div id = "options">
-            <div class = "option">
-                <label for="lengthCellsSlider">Размер клеток:</label>
-                <input id="lengthCellsSlider" type="range" min="10" max="100" step="10" value="10" />
+        <h1>Игра жизнь</h1>
+            <div>
+                <canvas id="canvas" width="800" height="800"></canvas>
             </div>
-            <div class = "option">
-                <label for="speedSlider">Длительность дня:</label>
-                <input id="speedSlider" type="range" min="1" max="20" step="1" value="2" />
-            </div>
-            <div class = "option">
-                <label for="colorPicker"> Цвет жителей:</label>
-                <input type="color" id="colorPicker" value="#986767">
-            </div>
-            <div class = "option">
-                <p>Текущее поколение: <b id="numberGenerationB"></b> </p>
-            </div>
-            <script src="js/life.js"></script>
-            <div class="option">
-                <!--<input type="button" onclick="live()" value="Пора выживать!" /> -->
-                <input id="playButton" style="background-color: white;" type="image" onclick="live()" width="64" height="64" src="./images/play.ico" />
-               <!-- <input type="button" onclick="clearGrid()" value="Очистить!" /> -->
-               <input id="clearButton" style="background-color: white;" type="image" onclick="clearGrid()" width="64" height="64" src="./images/clear.png" />
-            </div>
-    
-        </div>
+
+            <div id="options">
+                <h2>Правила</h2>
+                <p>1 Если клетка мертвая и около нее три живых клетки, то в этой клетке зарождается жизнь</p>
+                <p>2 Если клетка живая и около нее ноль или ни одной живой клетки, то эта клетка умирает от одиночества</p>
+                <p>3 Если клетка живая и около нее четыре или больше живых клеток, то эта клетка умирает от перенаселения</p>
+
+                <h2>Опции</h2>
+                <table>
+                    <tr>
+                        <td> 
+                            <label for="lengthCellsSlider">Размер клеток:</label>
+                        </td>
+                        <td>
+                            <input id="lengthCellsSlider" type="range" min="10" max="50" step="5" value="10" />
+                        </td>
+
+                        <td>               
+                             <b id ="valueLengthCellsSlider"></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="speedSlider">Длительность дня:</label>
+                        </td>
+                        <td>
+                            <input id="speedSlider" type="range" min="10" max="200" step="1" value="50" />
+                        </td>
+                        <td>
+                            <b id ="valueSpeedSlider"></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="colorPicker"> Цвет жителей:</label>
+                        </td>
+                        <td>
+                            <input type="color" id="colorPicker" value="#7a7a7a">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>Текущее поколение:</p>
+                        </td>
+                        <td>
+                            <b id="numberGenerationB"></b> 
+                        </td>
+                    </tr>
+                    <script src="js/life.js"></script>
+                    <tr>
+                        <td>
+                            <input id="playButton" style="background-color: white;" type="image" onclick="live()" width="64" height="64" src="./images/play.ico" />
+                        </td>
+                        <td>
+                            <input type="button" onclick="next()" value="Следующее поколение" />
+                        </td>
+                        <td>
+                            <input id="clearButton" style="background-color: white;" type="image" onclick="clearGrid()" width="64" height="64" src="./images/clear.png" />
+                        </td>
+                    </tr>
+                </table>
+            <div>
+                    <!--<input type="button" onclick="live()" value="Пора выживать!" /> -->
+                    <!-- <input type="button" onclick="clearGrid()" value="Очистить!" /> -->
+        
         
     </body>
 </html>
